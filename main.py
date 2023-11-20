@@ -46,12 +46,22 @@ class CityGrid:
         plt.plot([pos[1] + 0.5 for pos in path], [pos[0] + 0.5 for pos in path], 'r.-')
         
         plt.show()
-    
+    def find_coverage(self):
+        towers = []
+        for i in range(self.n):
+            for j in range(self.m):
+                if self.grid[i][j] == 0:
+                    self.place_tower(i, j, 1) 
+                    towers.append((i, j))
+
+        return towers
+
         
     def visualize_coverage(self):
         plt.imshow(self.grid, cmap='Blues')
         plt.colorbar()
         plt.show()
+        
     def find_coverage(self, tower_cost, budget):
         towers = []
         remaining_budget = budget
@@ -85,16 +95,17 @@ class CityGrid:
 
         return coverage_increase
 
+
 city = CityGrid(10, 10)
 city.display_grid()
 
 city.place_tower(3, 6, 2)
 tower_cost = {
-    (2, 4): 10,
-    (4, 7): 8,
-    (7, 2): 12,
-    (9, 9): 15
+    (2, 4): 9,
+    (7, 4): 7,
+    (7, 6): 10,
+    (9, 7): 14
 }
 
-towers = city.find_coverage(tower_cost=tower_cost, budget=30)
+towers = city.find_coverage(tower_cost=tower_cost, budget=city.coverage_threshold*100)
 city.visualize_coverage()
