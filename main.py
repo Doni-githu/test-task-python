@@ -28,15 +28,6 @@ class CityGrid:
                     self.grid[row][col] = 2
 
     
-    def find_coverage(self):
-        towers = []
-        for i in range(self.n):
-            for j in range(self.m):
-                if self.grid[i][j] == 0:
-                    self.place_tower(i, j, 1)
-                    towers.append((i, j))
-
-        return towers
     def calculate_distance(self, tower1, tower2):
         x1, y1 = tower1
         x2, y2 = tower2
@@ -55,49 +46,55 @@ class CityGrid:
         plt.plot([pos[1] + 0.5 for pos in path], [pos[0] + 0.5 for pos in path], 'r.-')
         
         plt.show()
+    
         
     def visualize_coverage(self):
         plt.imshow(self.grid, cmap='Blues')
         plt.colorbar()
         plt.show()
-    # def find_coverage(self, tower_cost, budget):
-    #     towers = []
-    #     remaining_budget = budget
+    def find_coverage(self, tower_cost, budget):
+        towers = []
+        remaining_budget = budget
 
-    #     while remaining_budget >= min(tower_cost.values()):
-    #         best_coverage_increase = 0
-    #         best_tower = None
+        while remaining_budget >= min(tower_cost.values()):
+            best_coverage_increase = 0
+            best_tower = None
 
-    #         for i in range(self.n):
-    #             for j in range(self.m):
-    #                 if self.grid[i][j] == 0:
-    #                     coverage_increase = self.calculate_coverage_increase(i, j, towers)
-    #                     if coverage_increase > best_coverage_increase and tower_cost[(i, j)] <= remaining_budget:
-    #                         best_coverage_increase = coverage_increase
-    #                         best_tower = (i, j)
+            for i in range(self.n):
+                for j in range(self.m):
+                    if self.grid[i][j] == 0:
+                        coverage_increase = self.calculate_coverage_increase(i, j, towers)
+                        if coverage_increase > best_coverage_increase and tower_cost[(i, j)] <= remaining_budget:
+                            best_coverage_increase = coverage_increase
+                            best_tower = (i, j)
 
-    #         if best_tower is None:
-    #             break
+            if best_tower is None:
+                break
 
-    #         self.place_tower(best_tower[0], best_tower[1], 1)
-    #         towers.append(best_tower)
-    #         remaining_budget -= tower_cost[best_tower]
+            self.place_tower(best_tower[0], best_tower[1], 1)
+            towers.append(best_tower)
+            remaining_budget -= tower_cost[best_tower]
 
-    #     return towers
+        return towers
 
-    # def calculate_coverage_increase(self, i, j, towers):
-    #     coverage_increase = 0
-    #     for tower in towers:
-    #         if self.calculate_distance((i, j), tower) <= 1:
-    #             coverage_increase -= 1
+    def calculate_coverage_increase(self, i, j, towers):
+        coverage_increase = 0
+        for tower in towers:
+            if self.calculate_distance((i, j), tower) <= 1:
+                coverage_increase -= 1
 
-    #     return coverage_increase
+        return coverage_increase
 
 city = CityGrid(10, 10)
 city.display_grid()
 
 city.place_tower(3, 6, 2)
-towers = city.find_coverage()
-path = city.find_reliable_path(tower1=towers[0], tower2=towers[1])
-city.visualize_path(path)
+tower_cost = {
+    (2, 4): 10,
+    (4, 7): 8,
+    (7, 2): 12,
+    (9, 9): 15
+}
+
+towers = city.find_coverage(tower_cost=tower_cost, budget=30)
 city.visualize_coverage()
