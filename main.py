@@ -27,10 +27,7 @@ class CityGrid:
                 if self.grid[row][col] == 0:
                     self.grid[row][col] = 2
 
-    def visualize_coverage(self):
-        plt.imshow(self.grid, cmap='Blues')
-        plt.colorbar()
-        plt.show()
+    
     def find_coverage(self):
         towers = []
         for i in range(self.n):
@@ -54,8 +51,14 @@ class CityGrid:
 
     def visualize_path(self, path):
         plt.imshow(self.grid, cmap='Blues')
-        plt.colorbar(mappable=[0, 1, 2], ax=['Unobstructed', 'Obstructed', 'Tower Coverage'])
+        plt.colorbar()
         plt.plot([pos[1] + 0.5 for pos in path], [pos[0] + 0.5 for pos in path], 'r.-')
+        
+        plt.show()
+        
+    def visualize_coverage(self):
+        plt.imshow(self.grid, cmap='Blues')
+        plt.colorbar()
         plt.show()
     # def find_coverage(self, tower_cost, budget):
     #     towers = []
@@ -94,4 +97,7 @@ city = CityGrid(10, 10)
 city.display_grid()
 
 city.place_tower(3, 6, 2)
+towers = city.find_coverage()
+path = city.find_reliable_path(tower1=towers[0], tower2=towers[1])
+city.visualize_path(path)
 city.visualize_coverage()
